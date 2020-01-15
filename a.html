@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Veille Technologique" />
+  <title>Phing</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <script src="https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Phing</h1>
+  <p class="author">
+Veille Technologique
+  </p>
+  <p class="date">Mikaël Le Roux (IEPSCF, Informatique de gestion, novembre 2018)</p>
+</div>
+<div id="introduction" class="title-slide slide section level1"><h1>Introduction</h1></div><div id="quest-ce-que-phing" class="slide section level2">
+<h1>Qu’est-ce que Phing</h1>
+<p>Phing est un <em>moteur de production</em> (<em>outil de build</em>, <em>build system</em>, <em>build automation tool</em>…) spécialisé pour la gestion de projets PHP.</p>
+<div style="text-align:center;margin-top:100px;">
+<p><img src="img/swissarmyknife.jpg" /></p>
+</div>
+</div><div id="moteur-de-production-build-system" class="slide section level2">
+<h1>Moteur de production / build system</h1>
+<p>Un moteur de production est un outil de gestion <strong>automatisée</strong>, <strong>organisée</strong> et <strong>centralisée</strong> des nombreuses tâches différentes que peut nécessiter un projet de développement informatique, au-delà de la simple écriture de son code source :</p>
+<ul>
+<li>compilation et édition de liens (pour les langages compilés ou semi-compilés)</li>
+<li>exécution de différentes batteries de tests (<em>PHPUnit</em>, <em>JUnit</em>…)</li>
+<li>génération automatique de documentation (<em>phpDocumentor</em>, <em>Javadoc</em>…)</li>
+<li>exécution de scripts divers, par exemple sur des bases de données (création et remplissage de base de développement, de tests, etc.)</li>
+<li>packaging, releases, build</li>
+<li>distribution, deploiement</li>
+<li>contrôle de version</li>
+<li>compilation/minification de ressources (<em>assets</em> JS, CSS…)</li>
+<li>sauvegardes diverses</li>
+<li>nettoyages divers (fichiers ou répertoires intermédiaires à supprimer)</li>
+<li>vérifications et analyses sur le code source et rapports divers :
+<ul>
+<li>contrôle de syntaxe</li>
+<li>conformité aux conventions de style</li>
+</ul></li>
+<li>gestion de dépendances</li>
+<li>nettoyage des tasses à café</li>
+<li>etc.</li>
+</ul>
+</div><div id="pourquoi-utiliser-phing-un-build-system" class="slide section level2">
+<h1>Pourquoi utiliser Phing / un build system</h1>
+<ul>
+<li>éviter l’écriture répétée de lignes de commandes complexes appelant les différents outils, ou leur recherche répétée dans l’historique de l’interpréteur de commandes (<strong><em>automatisation</em></strong>)</li>
+<li>éviter d’écrire soi-même des scripts réalisant des tâches standards déjà fréquemment rencontrées par d’autres avant soi (<strong><em>automatisation</em></strong>)</li>
+<li>éviter de commettre des erreurs dans l’ordre d’appel de lignes de commandes ou de scripts successifs en définissant une fois pour toute une séquence bien précise d’opérations à effectuer (<strong><em>organisation</em></strong>)</li>
+<li>dans une certaine mesure, atteindre à plus de <strong><em>portabilité</em></strong> en s’affranchissant des langages de script dépendants du système d’exploitation (<em>powershell</em>, <em>bash</em>, etc.)</li>
+</ul>
+</div><div id="par-rapport-à-un-ide" class="slide section level2">
+<h1>Par rapport à un IDE</h1>
+<p>Si certains environnements de développement intégré, nativement ou par l’adjonction de plugins, permettent déjà un accès rapide aux tâches les plus récurrentes des projet de développement, Phing apportera les possibilités suivantes :</p>
+<ul>
+<li>définition d’actions reprenant une succession d’opération complexes (y compris boucles et conditions)</li>
+<li>regroupement des commandes dans un fichier de configuration pouvant être versionné avec le code source et partagé entre collaborateurs ou sous différentes machines (<strong><em>centralisation</em></strong>)</li>
+<li>indépendance par rapport à l’IDE</li>
+<li>très grande richesse des tâches prédéfinies disponibles (&gt; 100)</li>
+</ul>
+<p>Du reste, Phing est lui-même intégré ou intégrable dans certains IDE disponibles pour PHP, notamment <strong><em>phpStorm</em></strong> ou <strong><em>NetBeans</em></strong>. Il n’y a donc pas à choisir…</p>
+</div><div id="ce-que-phing-nest-pas" class="slide section level2">
+<h1>Ce que Phing n’est pas</h1>
+<p>Une histoire d’horreur. Sauf si on déteste <em>vraiment</em> le XML.</p>
+<div style="text-align:center;">
+<img src="img/thething.jpg" alt="(“The Thing”, 1982, John Carpenter)" />
+<p>
+(“The Thing”, 1982, John Carpenter)
+</p>
+</div>
+</div><div id="origine-nom-licence" class="slide section level2">
+<h1>Origine, nom, licence :</h1>
+<ul>
+<li>s’inspire du projet <em>Ant</em> de la fondation <em>Apache</em>, spécialisé pour les projets en Java, dont il reprend l’essentiel du principe de fonctionnement et de la syntaxe de configuration XML</li>
+<li>Phing = acronyme récursif de <em>“PHing Is Not GNU make”</em> (<em>Make</em>, outil classique du C, probablement considérable comme l’ancêtre des moteurs de production moderne)</li>
+<li>logiciel libre (licence GPLv3)</li>
+</ul>
+</div>
+<div id="installation-et-prérequis" class="title-slide slide section level1"><h1>Installation et prérequis</h1></div><div id="prérequis" class="slide section level2">
+<h1>Prérequis</h1>
+<ul>
+<li>PHP dans une version 5.6 ou supérieure</li>
+<li>compilée avec les outils de gestion du XML (libxml2, xsl), ce qui est en général le cas par défaut</li>
+</ul>
+<p>Donc multiplateforme tant que PHP disponible.</p>
+<p>Remarques :</p>
+<ul>
+<li>certaines fonctionnalités avancées liées au système d’exploitation peuvent n’être pas disponibles sur Windows (exemple : <em>chmod</em> pour changer des droits d’accès au niveau du système de fichier).</li>
+<li>outils externes (<em>PHPUnit</em>, <em>phpDocumentor</em>, etc.) doivent être installés et configurés séparément (voir plutôt <em>Composer</em> pour la gestion de dépendance en PHP).</li>
+</ul>
+</div><div id="installation-par-composer" class="slide section level2">
+<h1>Installation par Composer</h1>
+<p>Recommandée sur le site officiel.</p>
+<p>On ajoute simplement une dépendance dans la section <em>require</em> ou <em>require-dev</em> du fichier ‘<em>composer.json</em>’ du projet :</p>
+<pre><code>{
+    &quot;require-dev&quot;: {
+        &quot;phing/phing&quot;: &quot;2.*&quot;
+    }
+}</code></pre>
+<p>Et l’installation se fait par :</p>
+<pre><code>composer install</code></pre>
+<p>L’exécutable Phing se retrouvant dans le répertoire vendor/bin du projet.</p>
+<p>L’installation peut aussi se faire de façon <em>globale</em> (pour l’utilisateur, pas pour le système) avec la commande :</p>
+<pre><code>$ composer global require phing/phing</code></pre>
+</div><div id="utilisation-dune-archive-phar-exécutable" class="slide section level2">
+<h1>Utilisation d’une archive Phar exécutable</h1>
+<p>Il suffit de télécharger l’archive Phar sur le site officiel (<a href="https://www.phing.info/get/phing-latest.phar" class="uri">https://www.phing.info/get/phing-latest.phar</a>) et d’exécuter celle-ci dans l’interpréteur PHP :</p>
+<pre><code>php phing-latest.phar</code></pre>
+<p>On se simplifiera ensuite la vie en créant un fichier ‘phing’.bat (Windows) ou un script shell ‘phing’ (Unix-like) contenant cette ligne et rendu accessible via sa variable d’environnement %PATH% ou $PATH. Cette méthode permet d’installer Phing une fois pour toute sur le système plutôt qu’au niveau du projet ou de l’utilisateur.</p>
+</div><div id="paquetages-logiciels-propre-à-certains-unix-like" class="slide section level2">
+<h1>Paquetages logiciels propre à certains Unix-like</h1>
+<p>Exemple sous Debian et dérivés :</p>
+<pre><code>apt-get install phing</code></pre>
+<p>Si disponible, cette option installe immédiatement l’exécutable phing pour l’ensemble des utilisateurs du système.</p>
+</div>
+<div id="fonctionnement" class="title-slide slide section level1"><h1>Fonctionnement</h1></div><div id="principe-de-base" class="slide section level2">
+<h1>Principe de base</h1>
+<ul>
+<li>exécutable <strong><em>phing</em></strong> en ligne de commande</li>
+<li>fichier de configuration XML lié au projet (<strong><em>buildfile</em></strong>, par défaut nommé “build.xml”)</li>
+<li>définitions d’actions portant sur le projet (<strong><em>target</em></strong>), dont une définie par défaut</li>
+<li>définition de possibilité de dépendance entre les target (organisation)</li>
+<li>les target appellent des séquences de tâches (<strong><em>tasks</em></strong>) prédéfinies (&gt; 100) réalisant les opérations souhaitées</li>
+<li>ou de tâches définies via les possibilités d’extension</li>
+</ul>
+<p>Syntaxe d’appel de base :</p>
+<pre><code>phing [-f &lt;buildfile&gt;] [target]</code></pre>
+<p>Ou en utilisant les valeurs par défaut (dans le répertoire contenant le buildfile) :</p>
+<pre><code>phing</code></pre>
+<p>Liste des actions disponibles (et description si attribut ‘description’ spécifié) :</p>
+<pre><code>phing -l</code></pre>
+</div><div id="exemple-hello-world" class="slide section level2">
+<h1>Exemple (<em>“Hello World”</em>) :</h1>
+<p>build.xml :</p>
+<pre><code>&lt;project name=&quot;HelloWorld&quot; basedir=&quot;.&quot; default=&quot;HelloWorld&quot;&gt;
+    &lt;target name=&quot;HelloCity&quot; description=&quot;says &#39;Hello&#39; to the city&quot;&gt;
+        &lt;echo msg=&quot;Hello City&quot; /&gt;
+    &lt;/target&gt;
+    &lt;target name=&quot;HelloMoon&quot; description=&quot;says &#39;Hello&#39; to the Moon&quot;&gt;
+        &lt;echo msg=&quot;Hello Moon&quot; /&gt;
+    &lt;/target&gt;
+    &lt;target name=&quot;HelloPlanet&quot; depends=&quot;HelloMoon&quot; description=&quot;says &#39;Hello&#39; to the world&quot;&gt;
+        &lt;echo msg=&quot;Hello Planet&quot; /&gt;
+    &lt;/target&gt;
+    &lt;target name=&quot;HelloWorld&quot; depends=&quot;HelloCity,HelloPlanet&quot; description=&quot;says &#39;Hello&#39; to the world&quot;&gt;
+        &lt;echo msg=&quot;Hello World&quot; /&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</code></pre>
+<p>appel :</p>
+<pre><code>phing</code></pre>
+<p>affichage:</p>
+<pre><code>Buildfile: /home/u/VeilleTechnologique/tests/exemple.helloworld.xml
+
+HelloWorld &gt; HelloCity:
+
+     [echo] Hello City
+
+HelloWorld &gt; HelloMoon:
+
+     [echo] Hello Moon
+
+HelloWorld &gt; HelloPlanet:
+
+     [echo] Hello Planet
+
+HelloWorld &gt; HelloWorld:
+
+     [echo] Hello World
+
+BUILD FINISHED
+
+Total time: 0.0624 seconds</code></pre>
+<p>appel d’une action précise :</p>
+<pre><code>phing HelloCity</code></pre>
+<p>affichage :</p>
+<pre><code>Buildfile: /home/u/VeilleTechnologique/tests/exemple.helloworld.xml
+
+HelloWorld &gt; HelloCity:
+
+     [echo] Hello City
+
+BUILD FINISHED
+
+Total time: 0.0618 seconds</code></pre>
+</div><div id="propriétés" class="slide section level2">
+<h1>Propriétés</h1>
+<p>Des propriétés (<strong><em>properties</em></strong>) peuvent être définies :</p>
+<ul>
+<li>dans un élément <strong><em>property</em></strong> du <em>buildfile</em></li>
+<li>dans un fichier de propriétés séparé</li>
+<li>par passage en ligne de commande (format : -D&lt;name&gt;=&lt;value&gt;</li>
+</ul>
+<p>(ordre de priorité croissant - écrasement si même nom)</p>
+<p>Et on accède ensuite à leur valeur dans les attributs des éléments du buildfile par la syntaxe :</p>
+<pre><code>${property-name}</code></pre>
+<p>Phing prédéfinit un certains nombre de propriétés :</p>
+<ul>
+<li>host.os : nom du système d’exploitation</li>
+<li>phing.project.name : nom du projet courant</li>
+<li>etc.</li>
+</ul>
+</div><div id="propriétés---exemple-simple" class="slide section level2">
+<h1>Propriétés - exemple simple</h1>
+<p>‘build.xml’ :</p>
+<pre><code>&lt;project name=&quot;props&quot; basedir=&quot;.&quot; default=&quot;main&quot;&gt;
+    &lt;property name=&quot;path.images&quot; value=&quot;chemin-vers-images&quot;/&gt;
+    &lt;target name=&quot;main&quot;&gt;
+        &lt;!-- propriété définie par utilisateur --&gt;
+        &lt;echo msg=&quot;path.image=${path.images}&quot;/&gt;
+        &lt;!-- propriétés prédéfinies --&gt;
+        &lt;echo msg=&quot;host.os=${host.os}&quot;/&gt;
+        &lt;echo msg=&quot;phing.project.name=${phing.project.name}&quot;/&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</code></pre>
+<p>affichage en sortie :</p>
+<pre><code>[echo] path.image=chemin-vers-images
+[echo] host.os=Linux
+[echo] phing.project.name=props</code></pre>
+</div><div id="propriétés---exemple-complexe" class="slide section level2">
+<h1>Propriétés - exemple complexe</h1>
+<p>‘build.properties’ :</p>
+<pre><code>path.images=chemin-vers-mes-images
+path.fichiers=chemin-vers-mes-fichiers
+path.wtf=chemin-vers-wtf</code></pre>
+<p>‘build.xml’ :</p>
+<pre><code>&lt;project name=&quot;proprietes&quot; basedir=&quot;.&quot; default=&quot;main&quot;&gt;
+    &lt;property file=&quot;./build.properties&quot; /&gt;
+    &lt;property name=&quot;path.base&quot;  value=&quot;chemin-de-base&quot; /&gt;
+    &lt;property name=&quot;path.images&quot; value=&quot;chemin-images-non-ecrase&quot;/&gt;
+    &lt;property name=&quot;path.fichiers&quot; value=&quot;chemin-fichiers-ecrase&quot; override=&quot;true&quot; /&gt;
+    &lt;property name=&quot;path.wtf&quot; value=&quot;oh when the saints&quot; override=&quot;true&quot; /&gt;
+    &lt;target name=&quot;main&quot;&gt;
+        &lt;echo msg=&quot;${path.base}&quot;/&gt;
+        &lt;echo msg=&quot;${path.images}&quot;/&gt;
+        &lt;echo msg=&quot;${path.fichiers}&quot;/&gt;
+        &lt;echo msg=&quot;${path.wtf}&quot;/&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</code></pre>
+<p>appel :</p>
+<pre><code>phing -Dpath.wtf=wtfiswtf</code></pre>
+<p>affichage en sortie :</p>
+<pre><code>[echo] chemin-de-base
+[echo] chemin-vers-mes-images
+[echo] chemin-fichiers-ecrase
+[echo] wtfiswtf</code></pre>
+</div><div id="commandes-de-base-fréquentes" class="slide section level2">
+<h1>Commandes de base fréquentes</h1>
+<h3 id="copytask">CopyTask</h3>
+<pre><code>&lt;copy file=&quot;somefile.txt&quot; tofile=&quot;/tmp/anotherfile.bak&quot; overwrite=&quot;true&quot;/&gt;</code></pre>
+<pre><code>&lt;copy todir=&quot;build&quot; &gt;
+  &lt;fileset defaultexcludes=&quot;false&quot; expandsymboliclinks=&quot;true&quot; dir=&quot;.&quot;&gt;
+    &lt;include name=&quot;**/*.php&quot; /&gt;
+  &lt;/fileset&gt;
+&lt;/copy&gt;</code></pre>
+<p>###MoveTask</p>
+<pre><code>&lt;move file=&quot;somefile.txt&quot; tofile=&quot;/tmp/anotherfile.bak&quot; overwrite=&quot;true&quot;/&gt;</code></pre>
+<h3 id="deletetask">DeleteTask</h3>
+<pre><code>&lt;!-- Delete a specific file --&gt;
+&lt;delete file=&quot;/tmp/foo.bar&quot; /&gt;
+
+&lt;!-- Delete a directory --&gt;
+&lt;delete dir=&quot;/tmp/darl&quot; includeemptydirs=&quot;true&quot; verbose=&quot;true&quot; failonerror=&quot;true&quot; /&gt;
+
+&lt;!-- Delete using a fileset --&gt;
+&lt;delete&gt;
+  &lt;fileset dir=&quot;/tmp&quot;&gt;
+    &lt;include name=&quot;*.bar&quot; /&gt;
+  &lt;/fileset&gt;
+&lt;/delete&gt;</code></pre>
+</div><div id="séquence-de-tâches-conditionnelles" class="slide section level2">
+<h1>Séquence de tâches conditionnelles</h1>
+<p>Exemple de séquence conditionnelle :</p>
+<pre><code>&lt;!-- Set default VERBOSE flag to TRUE --&gt;
+&lt;if&gt;
+    &lt;not&gt;
+        &lt;isset property=&quot;sync.verbose&quot;/&gt;
+    &lt;/not&gt;
+    &lt;then&gt;
+        &lt;property name=&quot;sync.verbose&quot; value=&quot;true&quot; override=&quot;true&quot; /&gt;
+        &lt;echo message=&quot;The value of sync.verbose has been set to true&quot; /&gt;
+    &lt;/then&gt;
+&lt;/if&gt;</code></pre>
+</div><div id="séquence-de-tâches-itératives" class="slide section level2">
+<h1>Séquence de tâches itératives</h1>
+<p>Exemple de séquence itérative :</p>
+<pre><code>&lt;!-- loop through languages, and call buildlang task with setted param --&gt;
+&lt;property name=&quot;languages&quot; value=&quot;en,fr,de&quot; /&gt;
+&lt;foreach list=&quot;${languages}&quot; param=&quot;lang&quot; target=&quot;buildlang&quot; /&gt;</code></pre>
+</div><div id="exectask" class="slide section level2">
+<h1>ExecTask</h1>
+<p>Exécution de commande externe dans l’interpréteur de commande (shell). Tâche généraliste, utile quand aucune tâche spécialisée ne convient.</p>
+<pre><code>&lt;!-- List the contents of &quot;/tmp&quot; out to a file. --&gt;
+&lt;exec command=&quot;ls -l /tmp &gt; foo.out&quot; escape=&quot;false&quot; /&gt;</code></pre>
+</div>
+<div id="exemple-de-tâches-spécialisées-fréquentes" class="title-slide slide section level1"><h1>Exemple de tâches spécialisées fréquentes</h1></div><div id="phpunittask" class="slide section level2">
+<h1>PHPUnitTask</h1>
+<p>Automatisation du lancement de batteries de tests unitaires avec <strong><em>PHPUnit</em></strong> :</p>
+<p>build.xml :</p>
+<pre><code>&lt;project name=&quot;projet&quot; basedir=&quot;.&quot; default=&quot;main&quot;&gt;
+    [..]
+    
+    &lt;target name=&quot;tests-model&quot;&gt;
+        &lt;phpunit bootstrap=&quot;src/autoload.php&quot; codecoverage=&quot;true&quot; haltonfailure=&quot;true&quot; haltonerror=&quot;true&quot;&gt;
+          &lt;formatter type=&quot;plain&quot; usefile=&quot;false&quot;/&gt;
+          &lt;batchtest&gt;
+            &lt;fileset dir=&quot;src/tests/services&quot;&gt;
+              &lt;include name=&quot;**/*Test*.php&quot;/&gt;
+            &lt;/fileset&gt;
+          &lt;/batchtest&gt;
+        &lt;/phpunit&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;tests-dao&quot;&gt;
+        &lt;phpunit bootstrap=&quot;src/autoload.php&quot; codecoverage=&quot;true&quot; haltonfailure=&quot;true&quot; haltonerror=&quot;true&quot;&gt;
+          &lt;formatter type=&quot;plain&quot; usefile=&quot;false&quot;/&gt;
+          &lt;batchtest&gt;
+            &lt;fileset dir=&quot;src/tests/dao&quot;&gt;
+              &lt;include name=&quot;**/*Test*.php&quot;/&gt;
+            &lt;/fileset&gt;
+          &lt;/batchtest&gt;
+        &lt;/phpunit&gt;
+    &lt;/target&gt;
+    
+    &lt;target name=&quot;tests&quot; depends=&quot;tests-model,tests-dao&quot;&gt;
+    &lt;/target&gt;
+
+    [..]
+&lt;/project&gt;
+</code></pre>
+</div><div id="pharpackagetask" class="slide section level2">
+<h1>PharPackageTask</h1>
+<p>Génération automatiques d’archive <strong><em>Phar</em></strong> :</p>
+<pre><code>&lt;pharpackage
+    destfile=&quot;./build/package.phar&quot;
+    basedir=&quot;./&quot;&gt;
+    &lt;fileset dir=&quot;src&quot;&gt;
+        &lt;include name=&quot;**/**&quot; /&gt;
+    &lt;/fileset&gt;
+    &lt;metadata&gt;
+        &lt;element name=&quot;version&quot; value=&quot;1.0&quot; /&gt;
+        &lt;element name=&quot;authors&quot;&gt;
+            &lt;element name=&quot;John Doe&quot;&gt;
+                &lt;element name=&quot;e-mail&quot; value=&quot;john@example.com&quot; /&gt;
+            &lt;/element&gt;
+        &lt;/element&gt;
+    &lt;/metadata&gt;
+&lt;/pharpackage&gt;</code></pre>
+</div><div id="phpdocumentor2task" class="slide section level2">
+<h1>PhpDocumentor2Task</h1>
+<p>Génération de la documentation du projet à partir des commentaires du code source avec <strong><em>phpDocumentor</em></strong> :</p>
+<p>dans le build.xml :</p>
+<pre><code>&lt;project name=&quot;projet&quot; basedir=&quot;.&quot; default=&quot;main&quot;&gt;
+
+    &lt;target name=&quot;doc&quot;&gt;
+        &lt;phpdoc2 title=&quot;API Documentation&quot;
+          destdir=&quot;apidocs&quot;
+          template=&quot;responsive-twig&quot;&gt;
+           &lt;fileset dir=&quot;./classes&quot;&gt;
+              &lt;include name=&quot;**/*.php&quot; /&gt;
+           &lt;/fileset&gt;
+        &lt;/phpdoc2&gt;
+    &lt;/target&gt;
+
+&lt;/project&gt;</code></pre>
+<p>appel :</p>
+<pre><code>phing doc</code></pre>
+</div><div id="phplint" class="slide section level2">
+<h1>PHPLint</h1>
+<p>Vérificateur de syntaxe <strong><em>Lint</em></strong>.</p>
+<pre><code>&lt;target name=&quot;lint&quot;&gt;
+    &lt;phplint&gt;
+      &lt;fileset dir=&quot;classes&quot;&gt;
+        &lt;include name=&quot;**/*.php&quot;/&gt;
+      &lt;/fileset&gt;
+    &lt;/phplint&gt;        
+&lt;/target&gt;</code></pre>
+<p>sortie :</p>
+<pre><code>Buildfile: /home/u/VeilleTechnologique/tests/projet/build.xml
+
+projet &gt; lint:
+
+  [phplint] Warning: Unsupported declare &#39;strict_types&#39; in classes/tests/CategoryTest.php on line 2
+  [phplint] Warning: Unsupported declare &#39;strict_types&#39; in classes/tests/ArticleTest.php on line 2
+
+BUILD FINISHED
+</code></pre>
+</div><div id="phpcodesniffertask" class="slide section level2">
+<h1>PhpCodeSnifferTask</h1>
+<p>Vérification de conformité à un standard de convention de code avec <strong><em>PHPCodeSniffer</em></strong> (ici, PEAR) :</p>
+<pre><code>&lt;phpcodesniffer
+  standard=&quot;PEAR&quot;
+  format=&quot;full&quot;
+  file=&quot;classes&quot;
+  allowedFileExtensions=&quot;php php5 inc&quot;/&gt;</code></pre>
+<p>extrait de sortie :</p>
+<pre><code>FILE: /home/u/VeilleTechnologique/tests/projet/classes/Category.php
+--------------------------------------------------------------------------------
+FOUND 4 ERROR(S) AFFECTING 4 LINE(S)
+--------------------------------------------------------------------------------
+ 2 | ERROR | Missing file doc comment
+ 3 | ERROR | Missing class doc comment
+ 5 | ERROR | Spaces must be used to indent lines; tabs are not allowed
+ 6 | ERROR | Spaces must be used to indent lines; tabs are not allowed
+--------------------------------------------------------------------------------</code></pre>
+</div><div id="en-vrac" class="slide section level2">
+<h1>En vrac</h1>
+<p>Mentionnons d’autres tâches existantes :</p>
+<ul>
+<li>JslLintTask : vérification de syntaxe JS</li>
+<li>JsMinTask : ‘minification’ de JS</li>
+<li>JsHintTask : détection d’erreur JS</li>
+<li>JsonValidateTask : vérification de format JSON valide</li>
+<li>SassTask : conversion de fichiers Sass ou Scss en fichier css.</li>
+</ul>
+<p>Appel à des systèmes de contrôle de version :</p>
+<ul>
+<li>GitPushTask</li>
+<li>HgPushTask</li>
+<li>SvnExportTask</li>
+</ul>
+</div>
+<div id="extensibilité" class="title-slide slide section level1"><h1>Extensibilité</h1></div><div id="extension-par-la-tâche-adhoctaskdeftask" class="slide section level2">
+<h1>Extension par la tâche AdhocTaskdefTask</h1>
+<p>Système d’extension “à la volée” très aisé pour l’implémentation d’une tâche simple :</p>
+<ul>
+<li>définition d’une classe dérivé de la classe phing/Task
+<ul>
+<li>directement dans le fichier de build</li>
+<li>dans une section CDATA (section XML non parsée, permettant l’usage des caractères réservés de la norme XML)</li>
+</ul></li>
+<li>le nom de la classe est curieusement indifférent</li>
+<li>appel comme d’une tâche prédéfinie</li>
+</ul>
+<p>build.xml :</p>
+<pre><code>&lt;target name=&quot;test-adhoctask&quot; description=&quot;==&gt;test AdhocTask &quot;&gt;
+    &lt;adhoc-task name=&quot;foo&quot;&gt;&lt;![CDATA[
+        class FooTest extends Task {
+            private $bar;
+
+            function setBar($bar) {
+                $this-&gt;bar = $bar;
+            }
+
+            function main() {
+                $this-&gt;log(&quot;In FooTest: &quot; . $this-&gt;bar);
+            }
+        }
+    ]]&gt;&lt;/adhoc-task&gt;
+    &lt;foo bar=&quot;B.L.I.N.G&quot;/&gt;
+&lt;/target&gt;               </code></pre>
+<p>résultat :</p>
+<pre><code>Buildfile: /home/u/VeilleTechnologique/tests/projet/build.xml
+
+projet &gt; test-adhoctask:
+
+      [foo] In FooTest: B.L.I.N.G
+
+BUILD FINISHED</code></pre>
+</div><div id="extension-plus-systématique" class="slide section level2">
+<h1>Extension plus systématique</h1>
+<p>Phing permet encore une extension encore plus approfondie : non seulement la création de nouvelles tâches complexes (<strong><em>Tasks</em></strong>) mais aussi la création de nouveaux types d’objets internes à son fonctionnement (<strong><em>Types</em></strong> et <strong><em>Mappers</em></strong>).</p>
+</div>
+<div id="intégration-en-ide" class="title-slide slide section level1"><h1>Intégration en IDE</h1></div><div id="support" class="slide section level2">
+<h1>Support</h1>
+<p>Phing est un outil en ligne de commande mais différents IDE proposent une intégration. Citons :</p>
+<ul>
+<li>phpStorm</li>
+<li>IntelliJ</li>
+<li>Netbeans</li>
+</ul>
+</div><div id="plugin-phing-dans-phpstorm" class="slide section level2">
+<h1>Plugin Phing dans phpStorm</h1>
+<ul>
+<li>plugin consacré à <em>phing</em> activé par défaut</li>
+<li>ouvrir un fichier de build au format Phing (‘build.xml’)</li>
+<li>cliquer à droite et choisir “Add As A Phing Build File”</li>
+<li>les <em>target</em> disponibles se retrouvent proposées dans un panneau de l’interface</li>
+</ul>
+<div class="figure">
+<img src="img/phpstorm-test.jpg" alt="(exécution d’une target “tests” dans phpStorm)" />
+<p class="caption">(exécution d’une target “tests” dans phpStorm)</p>
+</div>
+</div>
+<div id="comparaisons-et-alternatives" class="title-slide slide section level1"><h1>Comparaisons et alternatives</h1></div><div id="généralité-et-statut" class="slide section level2">
+<h1>Généralité et statut</h1>
+<ul>
+<li>des alternatives existent mais sont
+<ul>
+<li>soit non spécialisées pour PHP.</li>
+<li>soit moins généralistes (focalisées sur le déploiement)</li>
+</ul></li>
+<li>pas de statistiques sur l’utilisation de Phing et son statut sur le marché</li>
+<li>les recherches sur des mots-clefs tels que «<code>php build tool</code>» renvoient d’emblée vers des résultats liés à Phing</li>
+<li>un site de référence comme <a href="https://phptherightway.com/" class="uri">https://phptherightway.com/</a> le mentionne en tête de sa liste des outils de production et déploiement.</li>
+</ul>
+<p>Il semble donc raisonnable d’affirmer que Phing est le moteur de production de référence pour PHP.</p>
+</div><div id="ant" class="slide section level2">
+<h1>Ant</h1>
+<ul>
+<li>moteur de production le plus proche de Phing puisque son inspirateur</li>
+<li>mais spécialisé pour Java et non PHP : pas de tâche spécialisée pour PHP</li>
+<li>donc moins adapté et pas tout à fait un concurrent</li>
+<li>bien que néanmoins utilisable via sa tâche généraliste <em>ExecTask</em> en écrivant soi même les lignes de commandes d’appel aux outils externes liés à PHP</li>
+</ul>
+<p>Exemple d’utilisation non spécialisée d’Ant pour PHP via ExecTask : (constater la similarité du fonctionnement et de la syntaxe de base)</p>
+<p>‘build.xml’ :</p>
+<pre><code>&lt;project name=&quot;projet&quot; basedir=&quot;.&quot; default=&quot;doc&quot;&gt;
+    &lt;target name=&quot;doc&quot;&gt;
+        &lt;exec executable=&quot;phpdoc&quot;&gt;
+            &lt;arg value=&quot;-d&quot;/&gt;
+            &lt;arg value=&quot;./src&quot;/&gt;
+            &lt;arg value=&quot;-t&quot;/&gt;
+            &lt;arg value=&quot;./docs/apicmd&quot;/&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</code></pre>
+<p>Appel de l’exécutable en ligne de commande (dans le répertoire du build.xml) :</p>
+<pre><code>$ ant</code></pre>
+</div><div id="make" class="slide section level2">
+<h1>Make</h1>
+<ul>
+<li><strong><em>make</em></strong> : outil de build bien connu, déjà ancien (1976, source : Wikipedia) et concu pour le monde <strong><em>C</em></strong></li>
+<li>rien n’empêche de passer par make pour appeler des outils PHP via un <strong><em>makefile</em></strong>,</li>
+<li>mais les mêmes considérations s’appliquent que pour <em>Ant</em> : à moins d’être dans le cas particulier de déjà connaître la syntaxe de <em>make</em> et de vouloir éviter l’apprentissage de <em>Phing</em> pour répondre à un besoin simple et ponctuel, il n’y a aucun intérêt à préférer <em>make</em>, en dehors d’une éventuelle aversion pour le XML qu’utilise Phing.</li>
+</ul>
+<p>Extrait de fichier <strong><em>makefile</em></strong> possible pour un projet PHP:</p>
+<pre><code>SYMFONY_ENV ?= dev
+SYMFONY_CONSOLE_ARGS ?= --env=dev
+PHP=php
+[..]
+## Clean vendors, node_modules, cache, logs, assets, etc.
+clean:
+    rm -rf vendor/ node_modules/ web/bundles/ web/assets/ app/cache/* app/logs/*
+[..]
+## Run all tests (unit tests, code style, linters, etc.)
+test:
+    PHP app/console $(SYMFONY_CONSOLE_ARGS) security:check
+    PHP app/console $(SYMFONY_CONSOLE_ARGS) lint:yaml app
+    PHP app/console $(SYMFONY_CONSOLE_ARGS) lint:yaml src
+    PHP app/console $(SYMFONY_CONSOLE_ARGS) lint:twig src app</code></pre>
+<p>Exécution de l’action ‘clean’ après lecture du ‘makefile’ dans le répertoire courant :</p>
+<pre><code>$make clean</code></pre>
+</div><div id="autres-moteurs-de-production" class="slide section level2">
+<h1>Autres moteurs de production</h1>
+<p>D’autres moteurs de production comparables à Phing existent encore pour d’autres langages. Ces outils sont adaptés à leur environnement cible, dont ils utilisent le langage, et les mêmes considérations s’y appliquent qu’à <em>Ant</em> ou <em>Make</em> en ce qui concerne leur éventuelle utilisation pour un projet PHP.</p>
+<p>Citons:</p>
+<ul>
+<li><strong><em>Waf</em></strong>, pour Python</li>
+<li><strong><em>Rake</em></strong>, pour Ruby.</li>
+<li><strong><em>Capistrano</em></strong>, écrit en Ruby et basé sur Rake, mais se veut généraliste pour d’autres plateformes. Nécessite toutefois de connaître Ruby. Cité juste après Phing par <strong><em>phptherightway</em></strong> dans les outils de build, principalement pour le déploiement.</li>
+</ul>
+</div><div id="outils-de-déploiement-php" class="slide section level2">
+<h1>Outils de déploiement PHP</h1>
+<p>Des outils PHP existent, spécialement conçus pour le déploiement des applications PHP. Leur usage est donc a priori plus restreint que celui de Phing.</p>
+<ul>
+<li><em>Deployer</em> (<a href="https://deployer.org/" class="uri">https://deployer.org/</a>)</li>
+<li><em>Magallanes</em> (<a href="https://www.magephp.com/" class="uri">https://www.magephp.com/</a>)</li>
+<li><em>Rocketeer</em> (<a href="http://rocketeer.autopergamene.eu/" class="uri">http://rocketeer.autopergamene.eu/</a></li>
+</ul>
+<p>(non testés)</p>
+</div><div id="les-scripts-de-composer" class="slide section level2">
+<h1>Les scripts de Composer</h1>
+<p>L’utilitaire de gestion de dépendance Composer permet de configurer l’exécution de lignes de commandes. Cette fonctionnalité ne peut se substituer qu’à un usage simple de Phing.</p>
+<p>Extrait de fichier <em>‘composer.json’</em> :</p>
+<pre><code>&quot;scripts&quot;: {
+    &quot;phpcs&quot;: &quot;phpcs --standard=PSR2 src&quot;,
+    &quot;test&quot;: [
+        &quot;@clearCache&quot;,
+        &quot;phpunit&quot;
+    ],
+    &quot;clearCache&quot;: &quot;rm -rf cache/*&quot;
+}</code></pre>
+<p>Exécution du ‘<em>script</em>’ :</p>
+<pre><code>$composer run-script phpcs</code></pre>
+</div>
+<div id="usages-dérivés" class="title-slide slide section level1"><h1>Usages dérivés</h1></div><div id="principe" class="slide section level2">
+<h1>Principe</h1>
+<p>De même que l’on a vu qu’il est possible d’utiliser Ant ou Make pour PHP bien qu’ils n’y soient pas destinés, on peut détourner Phing de sa fonction première comme moteur de production PHP et s’en emparer comme d’un outil multifonctionnel à notre disposition.</p>
+</div><div id="exemple-génération-dun-rapport-écrit-et-dune-présentation" class="slide section level2">
+<h1>Exemple : Génération d’un rapport écrit et d’une présentation</h1>
+<ul>
+<li>utilisation de Phing pour générer un rapport écrit et une présentation</li>
+<li>avec l’utilitaire <strong><em>pandoc</em></strong> (écrit en Haskell)</li>
+</ul>
+<p>=&gt; aucun lien donc avec un projet PHP</p>
+<p>build.xml</p>
+<pre><code>&lt;project name=&quot;latex&quot; default=&quot;run&quot;&gt;
+    
+    &lt;property name=&quot;path.build&quot; value=&quot;build&quot;/&gt;
+    &lt;property name=&quot;filename.src.report&quot; value=&quot;phing-report.txt&quot;/&gt;
+    &lt;property name=&quot;filename.src.slide&quot; value=&quot;phing-slide.txt&quot;/&gt;
+    &lt;property name=&quot;filename.src.slide.header&quot; value=&quot;phing-slide-header.html&quot;/&gt;
+    &lt;property name=&quot;filename.build.report&quot; value=&quot;phing-rapport&quot;/&gt;
+    &lt;property name=&quot;filename.build.slide&quot; value=&quot;phing-presentation&quot;/&gt;
+
+    &lt;target name=&quot;clean&quot;&gt;
+        &lt;delete&gt;
+          &lt;fileset dir=&quot;${path.build}&quot;&gt;
+            &lt;include name=&quot;*.log&quot; /&gt;
+            &lt;include name=&quot;*.lof&quot; /&gt;
+            &lt;include name=&quot;*.lot&quot; /&gt;
+            &lt;include name=&quot;*.toc&quot; /&gt;
+            &lt;include name=&quot;*.aux&quot; /&gt;
+            &lt;include name=&quot;*.out&quot; /&gt;
+          &lt;/fileset&gt;
+        &lt;/delete&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;pdf&quot;&gt;
+        &lt;exec command=&quot;pandoc --number-sections -s -f markdown -t latex -o ${path.build}/${filename.build.report}.pdf ${filename.src.report}&quot; passthru=&quot;true&quot;/&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;latex&quot;&gt;
+        &lt;exec command=&quot;pandoc -s -f markdown -t latex -o ${path.build}/${filename.build.report}.tex ${filename.src.report}&quot; passthru=&quot;true&quot;/&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;slide&quot;&gt;
+        &lt;exec command=&quot;pandoc -s -f markdown -t slidy --slide-level 2 -H ${filename.src.slide.header} -o ${path.build}/${filename.build.slide}.html ${filename.src.slide}&quot; passthru=&quot;true&quot;/&gt;
+    &lt;/target&gt;
+
+    &lt;target name=&quot;slide-self&quot;&gt;
+        &lt;exec command=&quot;pandoc --self-contained --slide-level 2 -s -f markdown -t slidy -H ${filename.src.slide.header} -o ${path.build}/${filename.build.slide}.html ${filename.src.slide}&quot; passthru=&quot;true&quot;/&gt;
+    &lt;/target&gt;
+
+&lt;/project&gt;
+</code></pre>
+<p>Génération du rapport au format pdf à partir d’une source au format markdown :</p>
+<pre><code>phing pdf</code></pre>
+</div>
+<div id="conclusion" class="title-slide slide section level1"><h1>Conclusion</h1></div><div id="avantages" class="slide section level2">
+<h1>Avantages</h1>
+<p>On a déjà avancé plusieurs avantages dans la section “Pourquoi utiliser Phing”, y compris en complément des fonctionnalités d’un IDE.</p>
+<p>Ajoutons :</p>
+<ul>
+<li>simple outil, plutôt que nouvelle technologie révolutionnaire ou intellectuellement stimulante, mais rend humblement service</li>
+<li>facile à prendre en main pour un usage simple</li>
+<li>tout en permettant des usages complexes</li>
+<li>grand nombres de tâches prédéfinies disponibles (&gt;= 100)</li>
+<li>extensibilité</li>
+<li>peut servir à d’autres usages</li>
+<li>documentation exhaustive sur le site officiel</li>
+<li>exemples et tutoriels nombreux sur internet</li>
+<li>(et donc copier-coller rapides à la clé…)</li>
+</ul>
+</div><div id="inconvénients" class="slide section level2">
+<h1>Inconvénients (?)</h1>
+<ul>
+<li>les (potentiellement longs) fichiers de configurations XML rebutent beaucoup de gens</li>
+<li>de même que la ligne de commande (si pas d’intégration dans l’IDE)</li>
+</ul>
+</div><div id="commentaires" class="slide section level2">
+<h1>Commentaires</h1>
+<ul>
+<li>pas passionnant, certes, mais utile</li>
+<li>une installation globale sur un système me semble préférable à une installation par projet comme recommandée</li>
+</ul>
+</div><div id="sitographie" class="slide section level2">
+<h1>Sitographie</h1>
+<p>À propos de Phing :</p>
+<ul>
+<li>site officiel de Phing : <a href="https://www.phing.info/" class="uri">https://www.phing.info/</a></li>
+<li>Phing cité en tête des outils de build et deploiement sur le site de référence <strong><em>phptherightway</em></strong> : <a href="https://phptherightway.com/#building_and_deploying_your_application" class="uri">https://phptherightway.com/#building_and_deploying_your_application</a></li>
+<li>la mention de la section “scripts” de Composer comme alternative à un usage simple de Phing : <a href="https://blog.martinhujer.cz/have-you-tried-composer-scripts/" class="uri">https://blog.martinhujer.cz/have-you-tried-composer-scripts/</a></li>
+<li>Phing est une réponse PHP possible à la question <em>“Can you make a build in one step?”</em> de cet article du blog très connu de Joel Spolsky : <a href="https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/" class="uri">https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/</a></li>
+</ul>
+<p>Autre outil mentionné :</p>
+<ul>
+<li>site de pandoc, outil de conversion entre formats de documents rédactionnels et de présentation (markdown, latex, html, pdf, etc.): <a href="https://pandoc.org/" class="uri">https://pandoc.org/</a></li>
+</ul>
+</div>
+</body>
+</html>
