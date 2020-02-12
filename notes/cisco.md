@@ -7,15 +7,23 @@ Configuration de base du routeur
 Passage en mode d’exécution privilégié :
 ```
 Router>enable
+Router>ena
 ```
 
 Passez en mode de configuration globale :
 ```
-Router#config t
 Router#configure terminal
+Router#config t
 ```
 
-Changement nom d’hôte unique du routeur :
+```
+Router(config)#no ip domain-lookup
+```
+```
+Router(config)#service password-encryption
+```
+
+Changement nom d’hôte du routeur :
 ```
 Router(config)#hostname R1
 ```
@@ -25,14 +33,16 @@ Changement mdp passage en mode d’exécution privilégié :
 Router(config)#enable secret <mot de passe>
 ```
 
+
+
 Configuration les lignes de console et telnet pour se connecter au routeur :
 ```
 R1(config)#line console 0
-R1(config-line)#password cisco
+R1(config-line)#password <cisco>
 R1(config-line)#login
 R1(config-line)#exit
 R1(config)#line vty 0 4
-R1(config-line)#password cisco
+R1(config-line)#password <cisco>
 R1(config-line)#login
 R1(config-line)#exit
 ```
@@ -61,8 +71,10 @@ R1(config-if)#description Ciruit#VBN32696-123 (help desk:1-800-555-1234)
 
 Enregistrer les modifications apportées à un routeur
 ----------------------------------------------------
+
 ```
-R1#copy running-config startup-config : Enregistrer les modifications .
+R1#copy running-config startup-config
+R1(config)#do copy ru sta
 ```
 
 Vérifier des informations renvoyées par les commandes show
@@ -79,6 +91,12 @@ Voir informations sommaires sur la configuration d’interface :
 ```
 R1#show ip interface brief
 ```
+
+```
+R1(config)#do show ip interface brief
+```
+
+
 ```
 R1#show interfaces
 ```
@@ -215,6 +233,7 @@ Sources
 https://www.fbotutos.com/commandes-routeurs-cisco.html
 https://www.linuxtricks.fr/wiki/commandes-basiques-cisco
 https://upaae.com/cisco-router-modes-user-exe-mode-enable-mode-globel-configuration-mode/
+http://touchardinforeseau.servehttp.com/siteweb20142015/20142015/SNRI1/CISCO/R%C3%A9capitulatif%20des%20principales%20commandes%20IOS%20Cisco.pdf
 https://itstepforward.files.wordpress.com/2013/01/image001-708497.gif
 
 
