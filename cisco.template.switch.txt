@@ -1,0 +1,27 @@
+enable
+configure terminal
+    hostname S1
+    enable secret class
+    service password-encryption
+    banner motd $Authorized users only$
+    no ip domain-lookup
+   
+    line console 0
+        password cisco
+        login
+        logging synchronous
+        exec-timeout 60
+        exit
+    line vty 0 15
+        password cisco
+        login
+        logging synchronous
+        exec-timeout 60
+        exit
+    interface vlan 1
+        ip address 192.168.1.2 255.255.255.0
+        no shutdown
+        exit
+    ip default-gateway 192.168.1.1
+    exit
+copy running-config startup-config
