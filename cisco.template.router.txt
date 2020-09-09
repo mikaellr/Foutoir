@@ -56,13 +56,13 @@ configure terminal
         no shutdown
         exit
 exit
-copy running-config startup-config
 show ip interface brief
-! copy running-config tftp
-! copy running-config tftp://x.x.x.x/<filename>
-
 
 ! show ip ports all
 ! show control-plane host open-ports    
 ! no ip http server
 
+! IMPORTANT : any of the following lines, if uncommented, must be the last line because of confirm prompt :
+copy running-config startup-config
+! copy running-config tftp
+! copy running-config tftp://x.x.x.x/<filename>
